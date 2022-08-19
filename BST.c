@@ -112,6 +112,24 @@ int kth_smallest_element(struct Node *root, int k)
     }
 }
 
+struct Node *find_inorder_successor(struct Node *current, struct Node **parent)
+{
+    if (current->right != NULL)
+    {
+        *parent = current;
+        current = current->right;
+
+        while (current->left != NULL)
+        {
+            *parent = current;
+            current = current->left;
+        }
+
+        return current;
+    }
+    return NULL;
+}
+
 void attach_child_to_parent(struct Node *parent, struct Node *current)
 {
     struct Node *child;
@@ -134,9 +152,22 @@ void attach_child_to_parent(struct Node *parent, struct Node *current)
     }
 }
 
+void remove_leaf(struct Node *parent, struct Node *current)
+{
+    if (parent->left == current)
+    {
+        parent->left = NULL;
+    }
+    else if (parent->right == current)
+    {
+        parent->right = NULL;
+    }
+}
+
 struct Node *find_node(struct Node *root, int value, struct Node **parent)
 {
     // struct Node *parent = NULL;
+    printf("here pow");
     struct Node *current = root;
 
     while (current != NULL)
@@ -158,25 +189,44 @@ struct Node *find_node(struct Node *root, int value, struct Node **parent)
     return NULL;
 }
 
+void swap_btw_root_and_inorder_successor(struct Node *root, struct Node *found, struct Node *inorder_successor)
+{
+    if (inorder_successor->right == NULL)
+    {
+        found->value = inorder_successor->value;
+    }
+}
+
 void delete_node(struct Node *root, int value)
 {
     struct Node *parent = NULL;
     struct Node *found = find_node(root, value, &parent);
-    printf("checking for parent %d", parent->value);
+    if (parent != NULL)
+        printf("checking for parent %d", parent->value);
 
     if (found != NULL)
     {
         if (found->left != NULL && found->right != NULL)
         {
             printf("two children");
+            // struct Node *inorder_parent = NULL;
+            // struct Node *inorder_successor = find_inorder_successor(found, &inorder_parent);
+            // if (found != NULL)
+            // {
+            //     printf("\nInorder successor is %d\n", inorder_successor->value);
+            //     printf("\nParent of inorder successor is %d\n", inorder_parent->value);
+            // }
+            // swap_btw_root_and_inorder_successor(root, found, inorder_successor);
         }
         else if (found->left != NULL || found->right != NULL)
         {
-            printf("Only one child attach")
+            printf("\nOnly one child - attach to parent!!\n");
+            attach_child_to_parent(parent, found);
         }
         else
         {
-            printf("\nNo children\n");
+            printf("Leaf node!!");
+            remove_leaf(parent, found);
         }
     }
     return;
@@ -201,6 +251,8 @@ int main()
 
     printf("\n3th smallest element : %d\n", kth_smallest_element(root, 3));
 
-    delete_node(root, 10);
+    delete_node(root, 6);
+    printf("\nInorder traversal\n");
+    inorder_traversal(root);
     return 0;
 }
