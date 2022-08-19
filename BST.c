@@ -11,6 +11,49 @@ struct Node
 struct Node *stack[100];
 int top = -1;
 
+
+void bst_print_dot_null(int key, int nullcount, FILE* stream)
+{
+    fprintf(stream, "    null%d [shape=point];\n", nullcount);
+    fprintf(stream, "    %d -> null%d;\n", key, nullcount);
+}
+
+void bst_print_dot_aux(struct Node* node, FILE* stream)
+{
+    static int nullcount = 0;
+
+    if (node->left)
+    {
+        fprintf(stream, "    %d -> %d;\n", node->value, node->left->value);
+        bst_print_dot_aux(node->left, stream);
+    }
+    else
+        bst_print_dot_null(node->value, nullcount++, stream);
+
+    if (node->right)
+    {
+        fprintf(stream, "    %d -> %d;\n", node->value, node->right->value);
+        bst_print_dot_aux(node->right, stream);
+    }
+    else
+        bst_print_dot_null(node->value, nullcount++, stream);
+}
+
+void bst_print_dot(struct Node* tree, FILE* stream)
+{
+    fprintf(stream, "digraph BST {\n");
+    fprintf(stream, "    node [fontname=\"Arial\"];\n");
+
+    if (!tree)
+        fprintf(stream, "\n");
+    else if (!tree->right && !tree->left)
+        fprintf(stream, "    %d;\n", tree->value);
+    else
+        bst_print_dot_aux(tree, stream);
+
+    fprintf(stream, "}\n");
+}
+
 struct Node *insert_node(struct Node *root, int value)
 {
     if (root == NULL)
@@ -167,7 +210,7 @@ void remove_leaf(struct Node *parent, struct Node *current)
 struct Node *find_node(struct Node *root, int value, struct Node **parent)
 {
     // struct Node *parent = NULL;
-    printf("here pow");
+    printf("here pow\n");
     struct Node *current = root;
 
     while (current != NULL)
@@ -189,14 +232,6 @@ struct Node *find_node(struct Node *root, int value, struct Node **parent)
     return NULL;
 }
 
-void swap_btw_root_and_inorder_successor(struct Node *root, struct Node *found, struct Node *inorder_successor)
-{
-    if (inorder_successor->right == NULL)
-    {
-        found->value = inorder_successor->value;
-    }
-}
-
 void delete_node(struct Node *root, int value)
 {
     struct Node *parent = NULL;
@@ -208,15 +243,11 @@ void delete_node(struct Node *root, int value)
     {
         if (found->left != NULL && found->right != NULL)
         {
-            printf("two children");
-            // struct Node *inorder_parent = NULL;
-            // struct Node *inorder_successor = find_inorder_successor(found, &inorder_parent);
-            // if (found != NULL)
-            // {
-            //     printf("\nInorder successor is %d\n", inorder_successor->value);
-            //     printf("\nParent of inorder successor is %d\n", inorder_parent->value);
-            // }
-            // swap_btw_root_and_inorder_successor(root, found, inorder_successor);
+            struct Node *inorder_parent = NULL;
+            struct Node *inorder_successor = find_inorder_successor(found, &inorder_parent);
+            int temp = inorder_successor -> value;
+            delete_node(root, temp);
+            found -> value = temp;
         }
         else if (found->left != NULL || found->right != NULL)
         {
@@ -244,15 +275,24 @@ int main()
     insert_node(root, 10);
     insert_node(root, 11);
     inorder_traversal(root);
-    printf("\n-----experiment -------\n");
-    inorder_traversal_with_out_recursion(root);
-    printf("\n----experiment -------\n");
-    preorder_traversal_with_out_recursion(root);
+    // printf("\n-----experiment -------\n");
+    // inorder_traversal_with_out_recursion(root);
+    // printf("\n----experiment -------\n");
+    // preorder_traversal_with_out_recursion(root);
 
-    printf("\n3th smallest element : %d\n", kth_smallest_element(root, 3));
+   // printf("\n3th smallest element : %d\n", kth_smallest_element(root, 3));
 
-    delete_node(root, 6);
+    delete_node(root, 9);
     printf("\nInorder traversal\n");
     inorder_traversal(root);
+
+    FILE *ptr = fopen("adwaith.dot", "w+");
+
+    bst_print_dot(root, ptr);
+
+    system("dot -Tpng adwaith.dot -o tree.png");
+
+
+
     return 0;
 }

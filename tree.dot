@@ -1,9 +1,0 @@
-digraph g{
-100 -> 50 [color = red, style=dotted];
-50 -> 20 [color = red, style=dotted];
-50 -> 70 ;
-100 -> 110 ;
-110 -> 105 [color = red, style=dotted];
-110 -> 200 ;
-200 -> 115 [color = red, style=dotted];
-}
