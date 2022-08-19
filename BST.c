@@ -11,14 +11,13 @@ struct Node
 struct Node *stack[100];
 int top = -1;
 
-
-void bst_print_dot_null(int key, int nullcount, FILE* stream)
+void bst_print_dot_null(int key, int nullcount, FILE *stream)
 {
     fprintf(stream, "    null%d [shape=point];\n", nullcount);
     fprintf(stream, "    %d -> null%d;\n", key, nullcount);
 }
 
-void bst_print_dot_aux(struct Node* node, FILE* stream)
+void bst_print_dot_aux(struct Node *node, FILE *stream)
 {
     static int nullcount = 0;
 
@@ -39,7 +38,7 @@ void bst_print_dot_aux(struct Node* node, FILE* stream)
         bst_print_dot_null(node->value, nullcount++, stream);
 }
 
-void bst_print_dot(struct Node* tree, FILE* stream)
+void bst_print_dot(struct Node *tree, FILE *stream)
 {
     fprintf(stream, "digraph BST {\n");
     fprintf(stream, "    node [fontname=\"Arial\"];\n");
@@ -245,9 +244,9 @@ void delete_node(struct Node *root, int value)
         {
             struct Node *inorder_parent = NULL;
             struct Node *inorder_successor = find_inorder_successor(found, &inorder_parent);
-            int temp = inorder_successor -> value;
+            int temp = inorder_successor->value;
             delete_node(root, temp);
-            found -> value = temp;
+            found->value = temp;
         }
         else if (found->left != NULL || found->right != NULL)
         {
@@ -261,6 +260,50 @@ void delete_node(struct Node *root, int value)
         }
     }
     return;
+}
+
+void post_order_traversal_without_recursion(struct Node *root)
+{
+    printf("here here\n");
+    int top1 = -1, top2 = -1;
+    struct Node *stack1[100], *stack2[100];
+
+    stack1[++top1] = root;
+    while (top1 != -1)
+    {
+        struct Node *temp = stack1[top1--];
+        stack2[++top2] = temp;
+        if (temp->left != NULL)
+            stack1[++top1] = temp->left;
+        if (temp->right != NULL)
+            stack1[++top1] = temp->right;
+    }
+
+    while (top2 != -1)
+    {
+        printf("%d\n", stack2[top2--]->value);
+    }
+}
+
+void range_nodes_in_range(int low, int high, struct Node *root)
+{
+    top = -1;
+
+    struct Node *current = root;
+
+    while (top != -1 || current != NULL)
+    {
+        while (current != NULL)
+        {
+            stack[++top] = current;
+            current = current->left;
+        }
+
+        current = stack[top--];
+        if (current->value >= low && current->value <= high)
+            printf("\n%d\n", current->value);
+        current = current->right;
+    }
 }
 
 int main()
@@ -280,7 +323,7 @@ int main()
     // printf("\n----experiment -------\n");
     // preorder_traversal_with_out_recursion(root);
 
-   // printf("\n3th smallest element : %d\n", kth_smallest_element(root, 3));
+    // printf("\n3th smallest element : %d\n", kth_smallest_element(root, 3));
 
     delete_node(root, 9);
     printf("\nInorder traversal\n");
@@ -292,7 +335,9 @@ int main()
 
     system("dot -Tpng adwaith.dot -o tree.png");
 
+    range_nodes_in_range(5, 10, root);
 
+    post_order_traversal_without_recursion(root);
 
     return 0;
 }
