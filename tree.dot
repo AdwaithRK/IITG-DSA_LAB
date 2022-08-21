@@ -1,0 +1,9 @@
+digraph g{
+8 -> 11 [color = red, style=dotted];
+11 -> 14 [color = red, style=dotted];
+11 -> 16 ;
+8 -> 10 ;
+10 -> 7 [color = red, style=dotted];
+10 -> 13 ;
+13 -> 12 [color = red, style=dotted];
+}
