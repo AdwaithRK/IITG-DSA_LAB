@@ -10,6 +10,26 @@ struct Node
 
 struct Node *root = NULL;
 
+struct Hash_table_node
+{
+    int value;
+    struct Hash_table_node *next;
+};
+
+struct Hash_table_node *table[100] = {NULL};
+
+int hashCode(int value)
+{
+    return (value % 100);
+}
+
+void insert_into_hash_map(int value)
+{
+    int key = hashCode(value);
+
+    struct Hash_table_node *hash_node = (struct Hash_table_node *)malloc(sizeof(struct Hash_table_node));
+}
+
 void displayTreeHelper(struct Node *T, FILE *fp)
 {
     if (T != NULL)
@@ -79,6 +99,13 @@ void insertRoot(int value)
 {
     struct Node *element = createNode(value);
     root = element;
+}
+
+int DFS_Traversal(struct Node *root, int level)
+{
+    if (root == NULL)
+    {
+    }
 }
 
 int BFS_Traversal(struct Node *root)
