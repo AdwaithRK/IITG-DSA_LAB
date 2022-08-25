@@ -52,6 +52,7 @@ struct ThBSTNode *insertThBSTNode(int value)
         root = element;
         element->left = NULL;
         element->right = NULL;
+        element->rightThread = 0;
     }
     else if (value < (parent->key))
     {
@@ -181,6 +182,26 @@ void deleteThBinaryTree(int value)
     if (found == 1)
     {
         printf("\nFound!!!\n");
+
+        if (parent == NULL && (root->right == NULL || root->left == NULL))
+        {
+            printf("here in the new part!!!");
+            if (root->right == NULL)
+            {
+                printf("bye");
+                struct ThBSTNode *predecessor = inorderPred(root);
+                root = root->left;
+                predecessor->right = NULL;
+                predecessor->rightThread = 0;
+            }
+            else
+            {
+                root = root->right;
+            }
+        }
+        else
+        {
+
         if (temp->left == NULL && temp->rightThread == 1)
         {
             if (parent->left == temp)
