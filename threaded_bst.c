@@ -202,54 +202,55 @@ void deleteThBinaryTree(int value)
         else
         {
 
-        if (temp->left == NULL && temp->rightThread == 1)
-        {
-            if (parent->left == temp)
+            if (temp->left == NULL && temp->rightThread == 1)
             {
-                parent->left = NULL;
-                free(temp);
+                if (parent->left == temp)
+                {
+                    parent->left = NULL;
+                    free(temp);
+                }
+                else
+                {
+                    parent->right = temp->right;
+                    parent->rightThread = 1;
+                    free(temp);
+                }
+            }
+            else if (temp->left == NULL || temp->rightThread == 1)
+            {
+                if (temp->rightThread == 1)
+                {
+                    struct ThBSTNode *successor = inorderSuccessor(temp);
+                    struct ThBSTNode *predecessor = inorderPred(temp);
+                    struct ThBSTNode *child = temp->left;
+
+                    predecessor->right = successor;
+                    predecessor->rightThread = 1;
+
+                    if (parent->left == temp)
+                        parent->left = child;
+                    else
+                        parent->right = child;
+                }
+                else
+                {
+                    printf("bow bow");
+
+                    struct ThBSTNode *child = temp->right;
+
+                    if (parent->left == temp)
+                        parent->left = child;
+                    else
+                        parent->right = child;
+                }
             }
             else
             {
-                parent->right = temp->right;
-                parent->rightThread = 1;
-                free(temp);
+                struct ThBSTNode *succ = inorderSuccessor(temp);
+                int k = succ->key;
+                deleteThBinaryTree(k);
+                temp->key = k;
             }
-        }
-        else if (temp->left == NULL || temp->rightThread == 1)
-        {
-            if (temp->rightThread == 1)
-            {
-                struct ThBSTNode *successor = inorderSuccessor(temp);
-                struct ThBSTNode *predecessor = inorderPred(temp);
-                struct ThBSTNode *child = temp->left;
-
-                predecessor->right = successor;
-                predecessor->rightThread = 1;
-
-                if (parent->left == temp)
-                    parent->left = child;
-                else
-                    parent->right = child;
-            }
-            else
-            {
-                printf("bow bow");
-
-                struct ThBSTNode *child = temp->right;
-
-                if (parent->left == temp)
-                    parent->left = child;
-                else
-                    parent->right = child;
-            }
-        }
-        else
-        {
-            struct ThBSTNode *succ = inorderSuccessor(temp);
-            int k = succ->key;
-            deleteThBinaryTree(k);
-            temp->key = k;
         }
     }
 }
@@ -265,11 +266,11 @@ int main()
     // deleteThBinaryTree(10);
 
     insertThBSTNode(16);
-    insertThBSTNode(10);
-    insertThBSTNode(14);
-    insertThBSTNode(15);
-    insertThBSTNode(13);
-    deleteThBinaryTree(14);
+    insertThBSTNode(19);
+    insertThBSTNode(17);
+    insertThBSTNode(22);
+    // insertThBSTNode(13);
+    deleteThBinaryTree(16);
     displayTree(root, "tree.dot");
     system("dot -Tpng tree.dot -o tree.png");
 }
