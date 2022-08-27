@@ -7,6 +7,7 @@ struct avlNode
     struct avlNode *left;
     struct avlNode *right;
     int height;
+    int balance;
 };
 
 int max(int a, int b)
@@ -31,7 +32,7 @@ int getBalance(struct avlNode *N)
 struct avlNode *create_node(int value)
 {
     struct avlNode *node = (struct avlNode *)malloc(sizeof(struct avlNode));
-
+    node->value = value;
     node->left = NULL;
     node->right = NULL;
     node->height = 0;
@@ -123,14 +124,15 @@ struct avlNode *find_inorder_successor(struct avlNode *current)
 
 struct avlNode *delete_avl_node(int value, struct avlNode *root)
 {
+
     if (root == NULL)
         return root;
 
     if (root->value > value)
-        root = delete_avl_node(value, root->left);
+        root->left = delete_avl_node(value, root->left);
 
     else if (root->value < value)
-        root = delete_avl_node(value, root->right);
+        root->right = delete_avl_node(value, root->right);
     else
     {
         if (root->left == NULL || root->right == NULL)
@@ -188,4 +190,56 @@ struct avlNode *delete_avl_node(int value, struct avlNode *root)
     return root;
 }
 
-int main() {}
+void displayTreeHelper(struct avlNode *T, FILE *fp)
+{
+    if (T != NULL)
+    {
+
+        fprintf(fp, "%d[label=\"%d, bf:%d\"];", T->value, T->value, getBalance(T));
+        if (T->left != NULL)
+        {
+            fprintf(fp, "%d -> %d [color = red, style=dotted];\n", T->value, T->left->value);
+            displayTreeHelper(T->left, fp);
+        }
+        if (T->right != NULL)
+        {
+            fprintf(fp, "%d -> %d ;\n", T->value, T->right->value);
+            displayTreeHelper(T->right, fp);
+        }
+    }
+}
+
+int displayTree(struct avlNode *T, char *filename)
+{
+    FILE *fp;
+
+    fp = fopen(filename, "w+");
+    if (fp == NULL)
+    {
+        printf("displayTree(): Unable to open file %s", filename);
+        return -1;
+    }
+    fprintf(fp, "digraph g{\n");
+    displayTreeHelper(T, fp);
+    fprintf(fp, "}\n");
+
+    fclose(fp);
+
+    return 0;
+}
+
+int main()
+{
+    struct avlNode *root = NULL;
+    root = insert_node_into_avl(10, root);
+
+    root = insert_node_into_avl(14, root);
+    root = insert_node_into_avl(9, root);
+    root = insert_node_into_avl(7, root);
+    root = insert_node_into_avl(4, root);
+
+    root = delete_avl_node(14, root);
+
+    displayTree(root, "tree.dot");
+    system("dot -Tpng tree.dot -o tree.png");
+}
