@@ -231,14 +231,17 @@ int displayTree(struct avlNode *T, char *filename)
 int main()
 {
     struct avlNode *root = NULL;
+    root = insert_node_into_avl(8, root);
+    root = insert_node_into_avl(3, root);
+    root = insert_node_into_avl(5, root);
     root = insert_node_into_avl(10, root);
+    root = insert_node_into_avl(12, root);
+    root = insert_node_into_avl(6, root);
+    root = insert_node_into_avl(2, root);
+    root = insert_node_into_avl(1, root);
+    root = insert_node_into_avl(0, root);
 
-    root = insert_node_into_avl(14, root);
-    root = insert_node_into_avl(9, root);
-    root = insert_node_into_avl(7, root);
-    root = insert_node_into_avl(4, root);
-
-    root = delete_avl_node(14, root);
+    // root = delete_avl_node(14, root);
 
     displayTree(root, "tree.dot");
     system("dot -Tpng tree.dot -o tree.png");
