@@ -6,6 +6,7 @@ struct ThBSTNode
     int key;
     struct ThBSTNode *left;
     struct ThBSTNode *right;
+    int size;
     int rightThread;
 };
 
@@ -28,22 +29,28 @@ struct ThBSTNode *insertThBSTNode(int value)
 
         if (value < ptr->key)
         {
+            ptr->size++;
             ptr = ptr->left;
         }
         else
         {
             if (ptr->rightThread != 1)
             {
+                ptr->size++;
                 ptr = ptr->right;
             }
             else
+            {
+                ptr->size++;
                 break;
+            }
         }
     }
 
     struct ThBSTNode *element = (struct ThBSTNode *)malloc(sizeof(struct ThBSTNode));
     element->key = value;
     element->rightThread = 1;
+    element->size = 0;
     printf("here here");
 
     if (parent == NULL)
@@ -73,6 +80,7 @@ void displayTreeHelper(struct ThBSTNode *T, FILE *fp)
 {
     if (T != NULL)
     {
+        fprintf(fp, "%d[label=\"%d, size:%d\"];", T->key, T->key, T->size);
         if (T->left != NULL)
         {
             fprintf(fp, "%d -> %d [color = red, style=dotted];\n", T->key, T->left->key);
@@ -88,6 +96,53 @@ void displayTreeHelper(struct ThBSTNode *T, FILE *fp)
             fprintf(fp, "%d -> %d [color = blue, style=dotted];\n", T->key, T->right->key);
         }
     }
+}
+
+int sizeOfTree(struct ThBSTNode *root)
+{
+    if (!root)
+        return 0;
+    return root->size;
+}
+
+struct ThBSTNode *kthElement(struct ThBSTNode *root, int k)
+{
+    if (!root)
+        return NULL;
+
+    int size_of_right = sizeOfTree(root) - sizeOfTree(root->left);
+    // printf("%d %d %d\n", root->key, s, root->size);
+
+    if (size_of_right == k)
+        return root;
+    if (size_of_right > k && root->rightThread != 0)
+        return kthElement(root->right, k);
+    else
+        return kthElement(root->left, k - size_of_right);
+}
+
+struct ThBSTNode *find_node(struct ThBSTNode *root, int value)
+{
+    // struct Node *parent = NULL;
+    printf("here pow\n");
+    struct ThBSTNode *current = root;
+
+    while (current != NULL)
+    {
+        if (value == current->key)
+        {
+            return current;
+        }
+        if (current->key < value)
+        {
+            current = current->right;
+        }
+        else
+        {
+            current = current->left;
+        }
+    }
+    return NULL;
 }
 
 int displayTree(struct ThBSTNode *T, char *filename)
@@ -149,6 +204,11 @@ void printInorderTraversal()
 void deleteThBinaryTree(int value)
 {
 
+    if (find_node(root, value) == NULL)
+    {
+        return;
+    }
+
     int found = 0;
 
     struct ThBSTNode *temp = root, *parent = NULL;
@@ -165,12 +225,14 @@ void deleteThBinaryTree(int value)
         if (temp->key > value)
         {
             printf("temp value %d\n", temp->key);
+            temp->size--;
             temp = temp->left;
         }
         else
         {
             if (temp->rightThread == 0)
             {
+                temp->size--;
                 temp = temp->right;
             }
 
@@ -234,8 +296,6 @@ void deleteThBinaryTree(int value)
                 }
                 else
                 {
-                    printf("bow bow");
-
                     struct ThBSTNode *child = temp->right;
 
                     if (parent->left == temp)
@@ -265,12 +325,17 @@ int main()
     // insertThBSTNode(9);
     // deleteThBinaryTree(10);
 
-    insertThBSTNode(16);
-    insertThBSTNode(19);
-    insertThBSTNode(17);
-    insertThBSTNode(22);
-    // insertThBSTNode(13);
-    deleteThBinaryTree(16);
+    insertThBSTNode(20);
+    insertThBSTNode(15);
+    insertThBSTNode(12);
+    insertThBSTNode(11);
+    insertThBSTNode(14);
+
+    deleteThBinaryTree(15);
+    // deleteThBinaryTree(19);
+    // deleteThBinaryTree(22);
+    // deleteThBinaryTree(17);
+
     displayTree(root, "tree.dot");
     system("dot -Tpng tree.dot -o tree.png");
 }
