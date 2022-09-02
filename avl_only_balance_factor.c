@@ -94,10 +94,26 @@ void rightRotation(nodePtr *root)
     y->balance = y->balance + 1 + max(x->balance, 0);
 }
 
+int bstSearch(nodePtr *root, int data)
+{
+    if (*root == NULL)
+        return 0;
+    if ((*root)->key == data)
+    {
+        return 1;
+    }
+
+    if ((*root)->key < data)
+        return bstSearch(&(*root)->right, data);
+
+    if ((*root)->key > data)
+        return bstSearch(&(*root)->left, data);
+}
+
 void insert(nodePtr *root, int data)
 {
     static int checkBalance = 0;
-    nodePtr x, y;
+
     if (!(*root))
     {
         *root = getTreeNode();
@@ -225,14 +241,16 @@ void delete_node(nodePtr *root, int data)
                     leftRotation(root);
                 }
             }
-            else if ((*root)->balance == -1)
+            else
             {
-                (*root)->balance = 0;
-            }
-            else if ((*root)->balance == 0)
-            {
-                (*root)->balance = 1;
-                checkBalance = 0;
+                if ((*root)->balance == 0)
+                {
+                    checkBalance = 1;
+                }
+                else
+                {
+                    checkBalance = 0;
+                }
             }
         }
     }
@@ -254,13 +272,18 @@ void delete_node(nodePtr *root, int data)
                     rightRotation(root);
                 }
             }
-            else if ((*root)->balance == 1)
+            else
             {
-                (*root)->balance = 0;
-            }
-            else if ((*root)->balance == 0)
-            {
-                (*root)->balance = 1;
+                (*root)->balance--;
+
+                if ((*root)->balance == 0)
+                {
+                    checkBalance = 1;
+                }
+                else
+                {
+                    checkBalance = 0;
+                }
             }
         }
     }
@@ -330,11 +353,25 @@ int main()
 {
     nodePtr root;
     createBST(&root);
-    for (int i = 0; i < 20; i++)
-        insert(&root, i);
+    insert(&root, 24);
+    insert(&root, 12);
+    insert(&root, 42);
+    insert(&root, 47);
 
-    // insert(&root, 24);
+    // insert(&root, 14);
+    // insert(&root, 17);
+    // insert(&root, 11);
+    // insert(&root, 7);
+    // insert(&root, 53);
+    // insert(&root, 4);
+    // insert(&root, 13);
     // insert(&root, 12);
+    // insert(&root, 8);
+    // insert(&root, 60);
+    // insert(&root, 19);
+    // insert(&root, 20);
+
+    delete_node(&root, 12);
     // insert(&root, 42);
     // insert(&root, 41);
 
@@ -343,7 +380,7 @@ int main()
     // delete_node(&root, 17);
 
     // delete_node(&root, 9);
-    delete_node(&root, 18);
+    // delete_node(&root, 18);
 
     // for (int i = 0; i < 20; i++)
     //     delete_node(&root, i);
