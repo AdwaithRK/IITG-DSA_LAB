@@ -1,5 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#define RIGHT_SKEWED 1
+#define LEFT_SKEWED -1
+#define RIGHT_IMBALANCE 2
+#define LEFT_IMBALANCE -2
 
 struct node
 {
@@ -71,26 +75,26 @@ int min(int a, int b)
 
 void leftRotation(nodePtr *root)
 {
-    nodePtr x, y;
-    x = *root;
-    y = x->right;
-    x->right = y->left;
-    y->left = x;
-    *root = y;
-    x->balance = x->balance - 1 - max(y->balance, 0);
-    y->balance = y->balance - 1 + min(x->balance, 0);
+    nodePtr parent = *root;
+    nodePtr child = parent->right;
+    parent->right = child->left;
+    child->left = parent;
+    *root = child;
+
+    parent->balance = parent->balance - 1 - max(child->balance, 0);
+    child->balance = child->balance - 1 + min(parent->balance, 0);
 }
 
 void rightRotation(nodePtr *root)
 {
-    nodePtr x, y;
-    x = *root;
-    y = x->left;
-    x->left = y->right;
-    y->right = x;
-    *root = y;
-    x->balance = x->balance + 1 - min(y->balance, 0);
-    y->balance = y->balance + 1 + max(x->balance, 0);
+    nodePtr parent = *root;
+    nodePtr child = parent->left;
+    parent->left = child->right;
+    child->right = parent;
+    *root = child;
+
+    parent->balance = parent->balance + 1 - min(child->balance, 0);
+    child->balance = child->balance + 1 + max(parent->balance, 0);
 }
 
 int bstSearch(nodePtr *root, int data)
