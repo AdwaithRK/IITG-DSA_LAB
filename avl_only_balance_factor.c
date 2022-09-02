@@ -23,23 +23,22 @@ nodePtr getTreeNode()
     newNode->right = NULL;
 }
 
-void displayTreeHelper(nodePtr root, FILE *fpointer)
+void displayTreeHelper(nodePtr *T, FILE *fp)
 {
-    if (!root)
-        return;
-    if (root->left)
+    if (T != NULL)
     {
-        fprintf(fpointer, "%d [label = \"%d, %d\"]\n", root->key, root->key, root->balance);
-        fprintf(fpointer, "%d [label = \"%d, %d\"]\n", root->left->key, root->left->key, root->left->balance);
-        fprintf(fpointer, "%d -> %d [style=dotted, color=green]\n", root->key, root->left->key);
-        displayTreeHelper(root->left, fpointer);
-    }
-    if (root->right)
-    {
-        fprintf(fpointer, "%d [label = \"%d, %d\"]\n", root->key, root->key, root->balance);
-        fprintf(fpointer, "%d [label = \"%d, %d\"]\n", root->right->key, root->right->key, root->right->balance);
-        fprintf(fpointer, "%d -> %d [color=red]\n", root->key, root->right->key);
-        displayTreeHelper(root->right, fpointer);
+
+        fprintf(fp, "%d[label=\"%d, bf:%d\"];", (*T)->key, (*T)->key, (*T)->balance);
+        if ((*T)->left != NULL)
+        {
+            fprintf(fp, "%d -> %d [color = red, style=dotted];\n", (*T)->key, (*T)->left->key);
+            displayTreeHelper(&(*T)->left, fp);
+        }
+        if ((*T)->right != NULL)
+        {
+            fprintf(fp, "%d -> %d ;\n", (*T)->key, (*T)->right->key);
+            displayTreeHelper(&(*T)->right, fp);
+        }
     }
 }
 
@@ -53,7 +52,7 @@ int displayTree(nodePtr root)
         return 1;
     }
     fprintf(fpointer, "digraph g {\n");
-    displayTreeHelper(root, fpointer);
+    displayTreeHelper(&root, fpointer);
     fprintf(fpointer, "}");
     fclose(fpointer);
     system("dot -Tpng tree.dot -o tree.png");
@@ -110,15 +109,18 @@ int bstSearch(nodePtr *root, int data)
         return bstSearch(&(*root)->left, data);
 }
 
-void insert(nodePtr *root, int data)
+int insert(nodePtr *root, int data)
 {
     static int checkBalance = 0;
+
+    if (bstSearch(root, data))
+        return 0;
 
     if (!(*root))
     {
         *root = getTreeNode();
         (*root)->key = data;
-        return;
+        return 1;
     }
     else if (data < (*root)->key)
     {
@@ -212,15 +214,18 @@ nodePtr find_inorder_successor(nodePtr current)
     return NULL;
 }
 
-void delete_node(nodePtr *root, int data)
+int delete_node(nodePtr *root, int data)
 {
 
     static int checkBalance = 0;
 
     if (*root == NULL)
     {
-        return;
+        return 0;
     }
+
+    if (!bstSearch(root, data))
+        return 0;
 
     // printf("Entered Delete\n");
     if (data < (*root)->key)
@@ -353,27 +358,27 @@ int main()
 {
     nodePtr root;
     createBST(&root);
-    insert(&root, 24);
-    insert(&root, 12);
-    insert(&root, 42);
-    insert(&root, 47);
-
-    // insert(&root, 14);
-    // insert(&root, 17);
-    // insert(&root, 11);
-    // insert(&root, 7);
-    // insert(&root, 53);
-    // insert(&root, 4);
-    // insert(&root, 13);
+    // insert(&root, 24);
     // insert(&root, 12);
-    // insert(&root, 8);
-    // insert(&root, 60);
-    // insert(&root, 19);
-    // insert(&root, 20);
-
-    delete_node(&root, 12);
     // insert(&root, 42);
-    // insert(&root, 41);
+    // insert(&root, 47);
+
+    insert(&root, 14);
+    insert(&root, 17);
+    insert(&root, 11);
+    insert(&root, 7);
+    insert(&root, 53);
+    insert(&root, 4);
+    insert(&root, 13);
+    insert(&root, 12);
+    insert(&root, 8);
+    insert(&root, 60);
+    insert(&root, 19);
+    insert(&root, 20);
+
+    delete_node(&root, 8);
+    //  insert(&root, 42);
+    //  insert(&root, 41);
 
     // delete_node(&root, 11);
     // delete_node(&root, 15);
