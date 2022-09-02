@@ -4,7 +4,8 @@
 struct node
 {
     int key, balance;
-    struct node *left, *right;
+    struct node *left;
+    struct node *right;
 };
 
 typedef struct node node;
@@ -15,49 +16,13 @@ void createBST(nodePtr *root)
     *root = NULL;
 }
 
+// simple function to create a node
 nodePtr getTreeNode()
 {
     nodePtr newNode = (nodePtr)malloc(sizeof(struct node));
     newNode->balance = 0;
     newNode->left = NULL;
     newNode->right = NULL;
-}
-
-void displayTreeHelper(nodePtr root, FILE *fpointer)
-{
-    if (!root)
-        return;
-    if (root->left)
-    {
-        fprintf(fpointer, "%d [label = \"%d, %d\"]\n", root->key, root->key, root->balance);
-        fprintf(fpointer, "%d [label = \"%d, %d\"]\n", root->left->key, root->left->key, root->left->balance);
-        fprintf(fpointer, "%d -> %d [style=dotted, color=green]\n", root->key, root->left->key);
-        displayTreeHelper(root->left, fpointer);
-    }
-    if (root->right)
-    {
-        fprintf(fpointer, "%d [label = \"%d, %d\"]\n", root->key, root->key, root->balance);
-        fprintf(fpointer, "%d [label = \"%d, %d\"]\n", root->right->key, root->right->key, root->right->balance);
-        fprintf(fpointer, "%d -> %d [color=red]\n", root->key, root->right->key);
-        displayTreeHelper(root->right, fpointer);
-    }
-}
-
-int displayTree(nodePtr root)
-{
-    FILE *fpointer;
-    fpointer = fopen("tree.dot", "w+");
-    if (!fpointer)
-    {
-        printf("Unble to open file\n");
-        return 1;
-    }
-    fprintf(fpointer, "digraph g {\n");
-    displayTreeHelper(root, fpointer);
-    fprintf(fpointer, "}");
-    fclose(fpointer);
-    system("dot -Tpng tree.dot -o tree.png");
-    return 0;
 }
 
 int max(int a, int b)
@@ -78,6 +43,7 @@ void leftRotation(nodePtr *root)
     x->right = y->left;
     y->left = x;
     *root = y;
+
     x->balance = x->balance - 1 - max(y->balance, 0);
     y->balance = y->balance - 1 + min(x->balance, 0);
 }
@@ -97,7 +63,6 @@ void rightRotation(nodePtr *root)
 void insert(nodePtr *root, int data)
 {
     static int checkBalance = 0;
-    nodePtr x, y;
     if (!(*root))
     {
         *root = getTreeNode();
@@ -259,6 +224,7 @@ void delete_node(nodePtr *root, int data)
             else if ((*root)->balance == 0)
             {
                 (*root)->balance = 1;
+                checkBalance = 0;
             }
         }
     }
@@ -285,42 +251,45 @@ void delete_node(nodePtr *root, int data)
             (*root)->key = temp->key;
 
             delete_node(&(*root)->right, temp->key);
-            if (checkBalance == 1)
-            {
-
-                if ((*root)->balance == -1)
-                {
-                    if ((*root)->left->balance >= 0)
-                    {
-                        rightRotation(root);
-                    }
-                    else
-                    {
-                        leftRotation(&(*root)->right);
-                        rightRotation(root);
-                    }
-                }
-                else if ((*root)->balance == 1)
-                {
-                    (*root)->balance = 0;
-                }
-                else if ((*root)->balance == 0)
-                {
-                    (*root)->balance = -1;
-                    checkBalance = 0;
-                }
-            }
         }
     }
 }
 
-void inorder(nodePtr root)
+void displayTreeHelper(nodePtr T, FILE *fp)
 {
-    if (!root)
-        return;
-    inorder(root->left);
-    printf("Key: %d, Balance: %d\n", root->key, root->balance);
-    inorder(root->right);
+    if (T != NULL)
+    {
+        fprintf(fp, "%d[label=\"%d, bf: %d\"];", T->key, T->key, T->balance);
+        if (T->left != NULL)
+        {
+            fprintf(fp, "%d -> %d [color = red, style=dotted];\n", T->key, T->left->key);
+            displayTreeHelper(T->left, fp);
+        }
+        if (T->right != NULL)
+        {
+            fprintf(fp, "%d-> %d ;\n", T->key, T->right->key);
+            displayTreeHelper(T->right, fp);
+        }
+    }
+}
+
+int displayTree(nodePtr T, char *filename)
+{
+    FILE *fp;
+
+    fp = fopen(filename, "w+");
+    if (fp == NULL)
+    {
+        printf("displayTree(): Unable to open file %s", filename);
+        return -1;
+    }
+    fprintf(fp, "digraph g{\n");
+    displayTreeHelper(T, fp);
+    fprintf(fp, "}\n");
+
+    fclose(fp);
+
+    return 0;
 }
 
 int main()
@@ -333,17 +302,18 @@ int main()
     insert(&root, 20);
     insert(&root, 21);
 
-    delete_node(&root, 11);
+    delete_node(&root, 7);
     delete_node(&root, 15);
     delete_node(&root, 17);
 
-    delete_node(&root, 9);
-    delete_node(&root, 8);
+    // delete_node(&root, 9);
+    // delete_node(&root, 8);
 
-    for (int i = 0; i < 20; i++)
-        delete_node(&root, i);
+    // for (int i = 0; i < 20; i++)
+    //     delete_node(&root, i);
 
-    displayTree(root);
+    displayTree(root, "tree.dot");
+    system("dot -Tpng tree.dot -o tree.png");
 
     return 0;
 }
