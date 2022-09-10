@@ -157,13 +157,17 @@ void displayBSTHelper(BSTNodePtr root, FILE *fptr)
 {
     if (root != NULL)
     {
-        if (root->color)
+        if (root->color == RED)
+        {
             fprintf(fptr, "%d [label = \"%d\", color = red];\n", root->key, root->key);
+        }
         else
+        {
             fprintf(fptr, "%d [label = \"%d\", color = black];\n", root->key, root->key);
+        }
         if (root->left)
         {
-            fprintf(fptr, "%d -> %d [color = red];\n", root->key, root->left->key);
+            fprintf(fptr, "%d -> %d [color = red, style=dotted];\n", root->key, root->left->key);
             displayBSTHelper(root->left, fptr);
         }
         if (root->right)
@@ -241,74 +245,78 @@ int RedBlackInsert(BSTNodePtr *root, int data)
         prev->right = temp;
     }
 
-    BSTNodePtr parent = pop(); // Parent of the inserted node
-
-    if (parent->color == BLACK) // i.e parent is black and the added node is red. So no changes needed.
-    {
-        emptyStack();
-        return 1;
-    }
-
     int updateFlag = 1; // A flag for checking if the further rotations are needed.
 
     while (!empty() && updateFlag)
     {
-        BSTNodePtr grandParent = pop(); // grand parent
-        if (data < grandParent->key)    // key inserted is to the Left subtree of grandparent
-        {
-            if (grandParent->right && grandParent->right->color == RED) // sibling of parent is red
-            {
-                grandParent->color = RED;          // make grandparent red
-                grandParent->right->color = BLACK; // make sibling of parent black
-                grandParent->left->color = BLACK;  // make parent black
-            }
-            else
-            {
-                // rotate    RedBlackInsert(&root, 7);
+        BSTNodePtr parent = pop(); // Parent of the inserted node
 
-                updateFlag = 0;                                   // nothing need to be done after one
-                BSTNodePtr newRoot = rotation(grandParent, data); // rotate based on key value of inserted node and grandparent
-                if (empty())
-                {
-                    *root = newRoot; // if node is root, make root after rotation the root
-                }
-                else
-                {
-                    BSTNodePtr greatGrandParent = pop();       // take out great grandparent (or simply the parent of node)
-                    if (greatGrandParent->left == grandParent) // assign it the right position
-                        greatGrandParent->left = newRoot;
-                    else
-                        greatGrandParent->right = newRoot;
-                }
-            }
-        }
-        else // key inserted is to the right of the subtree of grandparent
+        if (parent->color == RED)
         {
-            if (grandParent->left && grandParent->left->color == RED) // sibling of parent is red
+            BSTNodePtr grandParent = pop(); // grand parent
+
+            if (data < grandParent->key) // key inserted is to the Left subtree of grandparent
             {
-                grandParent->color = RED;
-                grandParent->right->color = BLACK; // same as the above logic
-                grandParent->left->color = BLACK;
-            }
-            else
-            {
-                updateFlag = 0;
-                BSTNodePtr newRoot = rotation(grandParent, data);
-                if (empty())
+                if (grandParent->right && grandParent->right->color == RED) // sibling of parent is red
                 {
-                    *root = newRoot;
+                    grandParent->color = RED;          // make grandparent red
+                    grandParent->right->color = BLACK; // make sibling of parent black
+                    grandParent->left->color = BLACK;  // make parent black
                 }
                 else
                 {
-                    BSTNodePtr greatGrandParent = pop();
-                    if (greatGrandParent->left == grandParent)
-                        greatGrandParent->left = newRoot;
+
+                    updateFlag = 0;                                   // nothing need to be done after one
+                    BSTNodePtr newRoot = rotation(grandParent, data); // rotate based on key value of inserted node and grandparent
+                    if (empty())
+                    {
+                        *root = newRoot; // if node is root, make root after rotation the root
+                    }
                     else
-                        greatGrandParent->right = newRoot;
+                    {
+                        BSTNodePtr greatGrandParent = pop();       // take out great grandparent (or simply the parent of node)
+                        if (greatGrandParent->left == grandParent) // assign it the right position
+                            greatGrandParent->left = newRoot;
+                        else
+                            greatGrandParent->right = newRoot;
+                    }
+                }
+            }
+            else // key inserted is to the right of the subtree of grandparent
+            {
+                if (grandParent->left && grandParent->left->color == RED) // sibling of parent is red
+                {
+                    grandParent->color = RED;
+                    grandParent->right->color = BLACK; // same as the above logic
+                    grandParent->left->color = BLACK;
+                }
+                else
+                {
+                    updateFlag = 0;
+                    BSTNodePtr newRoot = rotation(grandParent, data); // rotate based on key value of inserted node and grandparent
+                    if (empty())
+                    {
+                        *root = newRoot;
+                    }
+                    else
+                    {
+                        BSTNodePtr greatGrandParent = pop();
+                        if (greatGrandParent->left == grandParent)
+                            greatGrandParent->left = newRoot;
+                        else
+                            greatGrandParent->right = newRoot;
+                    }
                 }
             }
         }
+        else
+            break;
     }
+
+    (*root)->color = 0; // color root black
+
+    emptyStack();
+    return 1;
 }
 
 int main()
@@ -339,6 +347,13 @@ int main()
     RedBlackInsert(&root, 1);
 
     RedBlackInsert(&root, 70);
+
+    // RedBlackInsert(&root, 95);
+
+    // RedBlackInsert(&root, 105);
+
+    // for (int i = 90; i < 120; i++)
+    //     RedBlackInsert(&root, i);
 
     displayBST(root, "RBtree.gv");
     system("dot -Tpng RBtree.gv -o RBtree.png");
