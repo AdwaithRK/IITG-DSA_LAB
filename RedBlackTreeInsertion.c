@@ -9,6 +9,7 @@ struct bstNode
     int key;
     struct bstNode *left;
     struct bstNode *right;
+    int size;
     int color;
 };
 
@@ -86,7 +87,16 @@ BSTNodePtr createNode(int key)
     newRedNode->color = RED; // every node added is RED
     newRedNode->left = NULL;
     newRedNode->right = NULL;
+    newRedNode->size = 1;
     return newRedNode;
+}
+
+void update_size(BSTNodePtr *node)
+{
+    int left_size = (*node)->right ? (*node)->right->size : 0;
+    int right_size = (*node)->left ? (*node)->left->size : 0;
+
+    (*node)->size = left_size + right_size + 1;
 }
 
 BSTNodePtr RightRotation(BSTNodePtr parent)
@@ -96,6 +106,9 @@ BSTNodePtr RightRotation(BSTNodePtr parent)
 
     child->right = parent;
     parent->left = temp;
+
+    update_size(&parent);
+    update_size(&child);
 
     parent->color = 1;
     child->color = 0;
@@ -110,6 +123,9 @@ BSTNodePtr LeftRotation(BSTNodePtr parent)
 
     child->left = parent;
     parent->right = temp;
+
+    update_size(&parent);
+    update_size(&child);
 
     parent->color = 1;
     child->color = 0;
@@ -159,11 +175,11 @@ void displayBSTHelper(BSTNodePtr root, FILE *fptr)
     {
         if (root->color == RED)
         {
-            fprintf(fptr, "%d [label = \"%d\", color = red];\n", root->key, root->key);
+            fprintf(fptr, "%d [label = \"%d bf:%d\" ,color = red];\n", root->key, root->key, root->size);
         }
         else
         {
-            fprintf(fptr, "%d [label = \"%d\", color = black];\n", root->key, root->key);
+            fprintf(fptr, "%d [label = \" %d bf:%d\", color = black];\n", root->key, root->key, root->size);
         }
         if (root->left)
         {
@@ -215,6 +231,26 @@ void rotateAndAdjust(int *updateFlag, BSTNodePtr *grandParent, int data, BSTNode
     }
 }
 
+int RBTreeSearch(BSTNodePtr root, int value)
+{
+    if (root == NULL)
+    {
+        return 0; // end of path, node not found
+    }
+    // search in right tree
+    if (value > root->key)
+    {
+        return RBTreeSearch(root->right, value);
+    }
+    // search at left
+    else if (value < root->key)
+    {
+        return RBTreeSearch(root->left, value);
+    }
+    else
+        return 1;
+}
+
 int RedBlackInsert(BSTNodePtr *root, int data)
 {
     if (*root == NULL)
@@ -227,8 +263,12 @@ int RedBlackInsert(BSTNodePtr *root, int data)
     BSTNodePtr cur = *root;
     BSTNodePtr prev = NULL;
 
+    if (RBTreeSearch(*root, data))
+        return 0;
+
     while (cur != NULL)
     {
+        cur->size++;
         push(cur);
         prev = cur;
         if (cur->key == data)
@@ -328,17 +368,17 @@ int main()
 
     RedBlackInsert(&root, 30);
 
-    // RedBlackInsert(&root, 25);
+    RedBlackInsert(&root, 25);
 
-    // RedBlackInsert(&root, 40);
+    RedBlackInsert(&root, 40);
 
-    // RedBlackInsert(&root, 60);
+    RedBlackInsert(&root, 60);
 
-    // RedBlackInsert(&root, 2);
+    RedBlackInsert(&root, 2);
 
-    // RedBlackInsert(&root, 1);
+    RedBlackInsert(&root, 1);
 
-    // RedBlackInsert(&root, 70);
+    RedBlackInsert(&root, 70);
 
     // RedBlackInsert(&root, 95);
 
