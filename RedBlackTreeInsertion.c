@@ -197,6 +197,24 @@ int displayBST(BSTNodePtr root, char *filename)
     return 0;
 }
 
+void rotateAndAdjust(int *updateFlag, BSTNodePtr *grandParent, int data, BSTNodePtr *root)
+{
+    *updateFlag = 0;                                   // nothing need to be done after one
+    BSTNodePtr newRoot = rotation(*grandParent, data); // rotate based on key value of inserted node and grandparent
+    if (empty())
+    {
+        *root = newRoot; // if node is root, make root after rotation the root
+    }
+    else
+    {
+        BSTNodePtr greatGrandParent = pop();        // take out great grandparent (or simply the parent of node)
+        if (greatGrandParent->left == *grandParent) // assign it the right position
+            greatGrandParent->left = newRoot;
+        else
+            greatGrandParent->right = newRoot;
+    }
+}
+
 int RedBlackInsert(BSTNodePtr *root, int data)
 {
     if (*root == NULL)
@@ -266,20 +284,7 @@ int RedBlackInsert(BSTNodePtr *root, int data)
                 else
                 {
 
-                    updateFlag = 0;                                   // nothing need to be done after one
-                    BSTNodePtr newRoot = rotation(grandParent, data); // rotate based on key value of inserted node and grandparent
-                    if (empty())
-                    {
-                        *root = newRoot; // if node is root, make root after rotation the root
-                    }
-                    else
-                    {
-                        BSTNodePtr greatGrandParent = pop();       // take out great grandparent (or simply the parent of node)
-                        if (greatGrandParent->left == grandParent) // assign it the right position
-                            greatGrandParent->left = newRoot;
-                        else
-                            greatGrandParent->right = newRoot;
-                    }
+                    rotateAndAdjust(&updateFlag, &grandParent, data, root);
                 }
             }
             else // key inserted is to the right of the subtree of grandparent
@@ -292,20 +297,7 @@ int RedBlackInsert(BSTNodePtr *root, int data)
                 }
                 else
                 {
-                    updateFlag = 0;
-                    BSTNodePtr newRoot = rotation(grandParent, data); // rotate based on key value of inserted node and grandparent
-                    if (empty())
-                    {
-                        *root = newRoot;
-                    }
-                    else
-                    {
-                        BSTNodePtr greatGrandParent = pop();
-                        if (greatGrandParent->left == grandParent)
-                            greatGrandParent->left = newRoot;
-                        else
-                            greatGrandParent->right = newRoot;
-                    }
+                    rotateAndAdjust(&updateFlag, &grandParent, data, root);
                 }
             }
         }
@@ -336,17 +328,17 @@ int main()
 
     RedBlackInsert(&root, 30);
 
-    RedBlackInsert(&root, 25);
+    // RedBlackInsert(&root, 25);
 
-    RedBlackInsert(&root, 40);
+    // RedBlackInsert(&root, 40);
 
-    RedBlackInsert(&root, 60);
+    // RedBlackInsert(&root, 60);
 
-    RedBlackInsert(&root, 2);
+    // RedBlackInsert(&root, 2);
 
-    RedBlackInsert(&root, 1);
+    // RedBlackInsert(&root, 1);
 
-    RedBlackInsert(&root, 70);
+    // RedBlackInsert(&root, 70);
 
     // RedBlackInsert(&root, 95);
 
