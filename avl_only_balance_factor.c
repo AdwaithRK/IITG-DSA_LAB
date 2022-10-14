@@ -362,29 +362,29 @@ int main()
 {
     nodePtr root;
     createBST(&root);
-    // insert(&root, 24);
-    // insert(&root, 12);
-    // insert(&root, 42);
-    // insert(&root, 47);
-
-    insert(&root, 14);
-    insert(&root, 17);
-    insert(&root, 11);
-    insert(&root, 7);
-    insert(&root, 53);
-    insert(&root, 4);
-    insert(&root, 13);
+    insert(&root, 24);
     insert(&root, 12);
-    insert(&root, 8);
-    insert(&root, 60);
-    insert(&root, 19);
-    insert(&root, 20);
+    insert(&root, 42);
+    insert(&root, 47);
 
-    delete_node(&root, 8);
+    // insert(&root, 14);
+    // insert(&root, 17);
+    // insert(&root, 11);
+    // insert(&root, 7);
+    // insert(&root, 53);
+    // insert(&root, 4);
+    // insert(&root, 13);
+    // insert(&root, 12);
+    // insert(&root, 8);
+    // insert(&root, 60);
+    // insert(&root, 19);
+    // insert(&root, 20);
+
+    // delete_node(&root, 8);
     //  insert(&root, 42);
     //  insert(&root, 41);
 
-    // delete_node(&root, 11);
+    delete_node(&root, 12);
     // delete_node(&root, 15);
     // delete_node(&root, 17);
 

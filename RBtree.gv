@@ -1,0 +1,25 @@
+digraph bst{
+16 [label = " 16 bf:12", color = black];
+16 -> 10 [color = red, style=dotted];
+10 [label = " 10 bf:5", color = black];
+10 -> 2 [color = red, style=dotted];
+2 [label = " 2 bf:3", color = black];
+2 -> 1 [color = red, style=dotted];
+1 [label = "1 bf:1" ,color = red];
+2 -> 7 ;
+7 [label = "7 bf:1" ,color = red];
+10 -> 15 ;
+15 [label = " 15 bf:1", color = black];
+16 -> 25 ;
+25 [label = " 25 bf:6", color = black];
+25 -> 18 [color = red, style=dotted];
+18 [label = " 18 bf:1", color = black];
+25 -> 40 ;
+40 [label = "40 bf:4" ,color = red];
+40 -> 30 [color = red, style=dotted];
+30 [label = " 30 bf:1", color = black];
+40 -> 60 ;
+60 [label = " 60 bf:2", color = black];
+60 -> 70 ;
+70 [label = "70 bf:1" ,color = red];
+}

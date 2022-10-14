@@ -1,5 +1,0 @@
-digraph g{
-19 -> 17 [color = red, style=dotted];
-17 -> 19 [color = blue, style=dotted];
-19 -> 22 ;
-}
