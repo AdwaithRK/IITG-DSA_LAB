@@ -2,6 +2,9 @@
 #include <stdio.h>
 // int heap_size = 9;
 
+int process_ids[5] = {128, 456, 123, 78, 987};
+int priority_ids[5] = {44, 99, 98, 89, 90};
+
 struct process_node
 {
     int process_id;
@@ -26,17 +29,18 @@ int parent(int index)
 int max_heapify(struct process_node *heap, int index, int heap_size)
 {
 
-    int largest, temp;
+    int largest;
+    struct process_node temp;
 
     if (index >= heap_size || left_child(index) >= heap_size || right_child(index) >= heap_size)
         return 0;
 
-    if (heap[left_child(index)].priority > heap[index])
+    if (heap[left_child(index)].priority > heap[index].priority)
         largest = left_child(index);
     else
         largest = index;
 
-    if (heap[right_child(index)] > heap[largest])
+    if (heap[right_child(index)].priority > heap[largest].priority)
         largest = right_child(index);
 
     if (largest != index)
@@ -65,7 +69,7 @@ void max_heapify_reverse(int *heap, int index, int heap_size)
     }
 }
 
-void construct_heap(int *heap, int heap_size)
+void construct_heap(struct process_node *heap, int heap_size)
 {
     for (int index = heap_size / 2; index >= 0; index--)
         max_heapify(heap, index, heap_size);
@@ -106,7 +110,11 @@ int main()
     for (int i = 0; i < heap_size; i++)
     {
         printf("The process no %d values (process_id and priority) is:\n", i);
-        scanf("%d", &heap[i].process_id);
-        scanf("%d", &heap[i].priority);
+        heap[i].process_id = process_ids[i];
+        heap[i].priority = priority_ids[i];
     }
+
+    construct_heap(heap, heap_size);
+
+    return 0;
 }
