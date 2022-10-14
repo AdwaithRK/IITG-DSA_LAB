@@ -23,7 +23,7 @@ int parent(int index)
     return ((index - 1) / 2);
 }
 
-int max_heapify(int *heap, int index, int heap_size)
+int max_heapify(struct process_node *heap, int index, int heap_size)
 {
 
     int largest, temp;
@@ -31,7 +31,7 @@ int max_heapify(int *heap, int index, int heap_size)
     if (index >= heap_size || left_child(index) >= heap_size || right_child(index) >= heap_size)
         return 0;
 
-    if (heap[left_child(index)] > heap[index])
+    if (heap[left_child(index)].priority > heap[index])
         largest = left_child(index);
     else
         largest = index;
