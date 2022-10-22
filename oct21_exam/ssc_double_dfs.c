@@ -54,6 +54,13 @@ int create_adjacency_list()
 
 int create_rev_adjacency_list(int number_of_nodes)
 {
+    for (int i = 0; i < number_of_nodes; i++)
+    {
+        struct Node *temp = adjacency_list[i];
+        while(temp != NULL){
+            
+        }
+    }
 }
 
 // Driver Program to test above functions
