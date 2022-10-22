@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 int time = 1;
+
 struct Node
 {
     int value;
@@ -11,6 +12,8 @@ struct Node **adjacency_list;
 int *in_time;
 int *out_time;
 int *visited;
+int *visitation_list;
+int visited_list_index = 0;
 int number_of_nodes;
 
 void attach_node(int index, int node_no)
@@ -28,6 +31,28 @@ void attach_node(int index, int node_no)
         adjacency_list[index] = temp;
     }
     return;
+}
+
+int create_adjacency_list()
+{
+    // int number_of_nodes;
+    int start_node = 0, end_node = 0;
+    FILE *ptr = fopen("input.txt", "r");
+
+    fscanf(ptr, "%d", &number_of_nodes);
+    printf("\nNumber of nodes %d\n", number_of_nodes);
+
+    adjacency_list = (struct Node **)malloc(number_of_nodes * sizeof(struct Node *));
+
+    while (fscanf(ptr, "%d<%d", &start_node, &end_node) != EOF)
+    {
+        printf("\nstart:%d, end: %d\n", start_node, end_node);
+        attach_node(start_node, end_node);
+    }
+
+    fclose(ptr);
+
+    return number_of_nodes;
 }
 
 void DFS(int current_node_index)
@@ -52,6 +77,8 @@ void DFS(int current_node_index)
 
 void Initial_DFS()
 {
+    for (int i = 0; i < number_of_nodes; i++)
+        visited[i] = -1;
     int component_count = 0;
     for (int i = 0; i < number_of_nodes; i++)
     {
@@ -67,39 +94,17 @@ void Initial_DFS()
     }
 }
 
-int create_adjacency_list()
-{
-    int number_of_nodes;
-    int start_node = 0, end_node = 0;
-    FILE *ptr = fopen("input.txt", "r");
-
-    fscanf(ptr, "%d", &number_of_nodes);
-    printf("\nNumber of nodes %d\n", number_of_nodes);
-
-    adjacency_list = (struct Node **)malloc(number_of_nodes * sizeof(struct Node *));
-
-    while (fscanf(ptr, "%d<%d", &start_node, &end_node) != EOF)
-    {
-        printf("\nstart:%d, end: %d\n", start_node, end_node);
-        attach_node(start_node, end_node);
-    }
-
-    fclose(ptr);
-
-    return number_of_nodes;
-}
-
 int main()
 {
+
+    create_adjacency_list();
 
     in_time = (int *)calloc(number_of_nodes, sizeof(int));
     out_time = (int *)calloc(number_of_nodes, sizeof(int));
     visited = (int *)calloc(number_of_nodes, sizeof(int));
-    adjacency_list = (struct Node **)malloc(number_of_nodes * sizeof(struct Node *));
+    // adjacency_list = (struct Node **)malloc(number_of_nodes * sizeof(struct Node *));
 
-    create_adjacency_list();
-
-    // Initial_DFS();
+    Initial_DFS();
 
     return 0;
 }

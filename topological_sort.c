@@ -114,6 +114,6 @@ void topological_sort(int number_of_nodes)
 int main()
 {
     int number_nodes = create_adjacency_list();
-    topological_sort(number_nodes);
+    // topological_sort(number_nodes);
     return 0;
 }
