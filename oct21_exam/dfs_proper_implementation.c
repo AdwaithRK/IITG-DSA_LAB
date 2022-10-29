@@ -99,7 +99,7 @@ void Initial_DFS(int number_of_nodes, int *time, int *visited, int *in_time, int
 void printDFSTree(int number_of_nodes, int *in_time, int *out_time)
 {
     FILE *fp = fopen("dfstree.dot", "w");
-    fprintf(fp, "digraph{\n");
+    fprintf(fp, "graph{\n");
     for (int i = 0; i < number_of_nodes; i++)
     {
         fprintf(fp, "%d[label=\"vertex name:%d, d:%d f:%d\"] ;\n", i, i, in_time[i], out_time[i]);
@@ -108,7 +108,7 @@ void printDFSTree(int number_of_nodes, int *in_time, int *out_time)
     {
         if (predecessor[i] != -1)
         {
-            fprintf(fp, "%d -> %d ;\n", predecessor[i], i);
+            fprintf(fp, "%d -- %d ;\n", predecessor[i], i);
         }
     }
     fprintf(fp, "}\n");

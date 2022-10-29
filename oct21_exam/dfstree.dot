@@ -1,4 +1,4 @@
-digraph{
+graph{
 0[label="vertex name:0, d:0 f:11"] ;
 1[label="vertex name:1, d:9 f:10"] ;
 2[label="vertex name:2, d:7 f:8"] ;
@@ -9,12 +9,12 @@ digraph{
 7[label="vertex name:7, d:17 f:18"] ;
 8[label="vertex name:8, d:15 f:16"] ;
 9[label="vertex name:9, d:13 f:14"] ;
-0 -> 1 ;
-0 -> 2 ;
-0 -> 3 ;
-3 -> 4 ;
-3 -> 5 ;
-6 -> 7 ;
-6 -> 8 ;
-6 -> 9 ;
+0 -- 1 ;
+0 -- 2 ;
+0 -- 3 ;
+3 -- 4 ;
+3 -- 5 ;
+6 -- 7 ;
+6 -- 8 ;
+6 -- 9 ;
 }
