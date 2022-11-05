@@ -262,11 +262,11 @@ void decreaseKey(struct MinHeap *minHeap,
 
 // A utility function to check if a given vertex
 // 'v' is in min heap or not
-bool isInMinHeap(struct MinHeap *minHeap, int v)
+int isInMinHeap(struct MinHeap *minHeap, int v)
 {
     if (minHeap->pos[v] < minHeap->size)
-        return true;
-    return false;
+        return 1;
+    return 0;
 }
 
 // A utility function used to print the solution
